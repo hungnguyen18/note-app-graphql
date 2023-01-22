@@ -1,14 +1,19 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
+import AuthProvider from '../context/AuthProvider';
 import Home from '../pages/Home';
 import Login from '../pages/login';
 
 const AuthLayout = () => {
-    return <Outlet />;
+    return (
+        <AuthProvider>
+            <Outlet />
+        </AuthProvider>
+    );
 };
 
 export default createBrowserRouter([
     {
-        element: <AuthLayout/>,
+        element: <AuthLayout />,
         children: [
             {
                 element: <Login />,
