@@ -2,22 +2,35 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { createContext } from 'react';
 import { getAuth } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 function AuthProvider({ children }) {
     const [user, setUser] = useState();
 
     const auth = getAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubcribed = auth.onIdTokenChanged((user) => {
+        const unsubscribed = auth.onIdTokenChanged((user) => {
             console.log({ user });
+
+            if (user?.uid) {
+                setUser(user);
+                localStorage.setItem('accessToken', user.accessToken);
+                return;
+            }
+
+            setUser({});
+            localStorage.clear();
+            navigate('/login');
         });
 
         return () => {
-            unsubcribed();
+            unsubscribed();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [auth]);
 
     return (
